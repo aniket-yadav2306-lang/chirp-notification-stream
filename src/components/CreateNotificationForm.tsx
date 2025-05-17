@@ -33,8 +33,11 @@ const CreateNotificationForm: React.FC<CreateNotificationFormProps> = ({ onSucce
       : undefined;
     
     try {
+      // Get the user ID and await the Promise
+      const userId = await getCurrentUserId();
+      
       await sendNotification(
-        getCurrentUserId(),
+        userId,
         type,
         title,
         content,
