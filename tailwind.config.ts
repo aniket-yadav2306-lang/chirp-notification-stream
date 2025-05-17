@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,11 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				notification: {
+					email: "#4263eb",
+					sms: "#ae3ec9",
+					"in-app": "#2b8a3e"
 				}
 			},
 			borderRadius: {
@@ -84,11 +90,21 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'notification-pulse': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.7' },
+				},
+				'slide-in': {
+					'0%': { transform: 'translateX(100%)' },
+					'100%': { transform: 'translateX(0)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'notification-pulse': 'notification-pulse 2s ease-in-out infinite',
+				'slide-in': 'slide-in 0.3s ease-out'
 			}
 		}
 	},

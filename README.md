@@ -1,73 +1,71 @@
-# Welcome to your Lovable project
 
-## Project info
+# Chirp Notification Service
 
-**URL**: https://lovable.dev/projects/eaf755c1-a6ca-41cc-ad4f-0ecaf2d9790a
+A modern notification delivery system with support for Email, SMS, and In-app notifications.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- **Multiple Notification Types**: Support for Email, SMS, and In-app notifications with distinct visual indicators
+- **Real-time Notifications**: Simulated real-time notification delivery
+- **Notification Management**: View, mark as read, and create new notifications
+- **Responsive Design**: Works on desktop and mobile devices
 
-**Use Lovable**
+## Technical Implementation
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/eaf755c1-a6ca-41cc-ad4f-0ecaf2d9790a) and start prompting.
+This project simulates a notification API with these endpoints:
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Send a Notification** (POST /notifications)
+- **Get User Notifications** (GET /users/{id}/notifications)
+- **Mark as Read** (PUT /notifications/{id}/read)
+- **Mark All as Read** (PUT /users/{id}/notifications/read)
 
-**Use your preferred IDE**
+## Getting Started
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Node.js and npm installed
 
-Follow these steps:
+### Installation
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+1. Clone the repository
+   ```
+   git clone <repository-url>
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. Install dependencies
+   ```
+   npm install
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+3. Start the development server
+   ```
+   npm run dev
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+4. Open your browser and navigate to `http://localhost:8080`
 
-**Edit a file directly in GitHub**
+## Project Structure
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `src/components/` - UI components 
+- `src/services/` - API service layer
+- `src/types/` - TypeScript type definitions
+- `src/pages/` - Application pages
 
-**Use GitHub Codespaces**
+## Assumptions Made
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- For this demo, we're using a mock API with in-memory storage
+- A single user with ID "user-123" is used for demonstration
+- In a real implementation, authentication would be required
+- Error handling and retries would be more robust in production
 
-## What technologies are used for this project?
+## Future Enhancements
 
-This project is built with:
+- **Queue Integration**: Implement RabbitMQ or Kafka for processing notifications
+- **Retry Mechanism**: Add retry logic for failed notifications
+- **User Preferences**: Allow users to customize notification settings
+- **Real Backend**: Replace mock API with a real backend service
+- **Real-time Updates**: Implement WebSockets for instant notification delivery
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## License
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/eaf755c1-a6ca-41cc-ad4f-0ecaf2d9790a) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This project is licensed under the MIT License - see the LICENSE file for details.
