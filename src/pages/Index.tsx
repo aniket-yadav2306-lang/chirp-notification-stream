@@ -7,15 +7,17 @@ import NotificationCreate from "@/components/NotificationCreate";
 import NotificationHeader from "@/components/NotificationHeader";
 import EmptyNotifications from "@/components/EmptyNotifications";
 import NotificationSkeleton from "@/components/NotificationSkeleton";
+import UserProfile from "@/components/UserProfile";
 import { Notification } from "@/types/notification";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   getUserNotifications, 
-  getCurrentUserId,
   markAllAsRead
 } from "@/services/notificationApi";
 import { toast } from "sonner";
 
 const NotificationsPage: React.FC = () => {
+  const { user } = useAuth();
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -28,8 +30,9 @@ const NotificationsPage: React.FC = () => {
     error, 
     refetch 
   } = useQuery({
-    queryKey: ["notifications", getCurrentUserId()],
-    queryFn: () => getUserNotifications(getCurrentUserId())
+    queryKey: ["notifications", user?.id],
+    queryFn: () => getUserNotifications(user?.id || ''),
+    enabled: !!user?.id
   });
 
   const notifications = data?.data || [];
@@ -49,8 +52,10 @@ const NotificationsPage: React.FC = () => {
 
   // Handle mark all as read
   const handleMarkAllAsRead = async () => {
-    await markAllAsRead(getCurrentUserId());
-    refetch();
+    if (user?.id) {
+      await markAllAsRead(user.id);
+      refetch();
+    }
   };
 
   // Handle create notification success
@@ -72,6 +77,11 @@ const NotificationsPage: React.FC = () => {
 
   return (
     <div className="container max-w-4xl py-8">
+      <div className="mb-8 flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Notification App</h1>
+        <UserProfile />
+      </div>
+      
       <NotificationHeader 
         unreadCount={unreadCount}
         onCreateClick={() => setIsCreateOpen(true)}

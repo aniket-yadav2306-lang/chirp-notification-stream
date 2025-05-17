@@ -1,53 +1,7 @@
 
 import { Notification, NotificationType, NotificationResponse, NotificationsResponse } from "../types/notification";
 import { toast } from "sonner";
-
-// Mock user ID for demo purposes
-const CURRENT_USER_ID = "user-123";
-
-// In-memory store for notifications
-let notificationsStore: Notification[] = [
-  {
-    id: "notif-1",
-    userId: CURRENT_USER_ID,
-    type: "email",
-    title: "New Email Update",
-    content: "You have received a new email from your manager about the quarterly review.",
-    timestamp: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
-    read: false,
-    metadata: {
-      sender: "manager@company.com",
-      priority: "high"
-    }
-  },
-  {
-    id: "notif-2",
-    userId: CURRENT_USER_ID,
-    type: "sms",
-    title: "SMS Verification",
-    content: "Your verification code is 123456. It expires in 10 minutes.",
-    timestamp: new Date(Date.now() - 7200000).toISOString(), // 2 hours ago
-    read: true
-  },
-  {
-    id: "notif-3",
-    userId: CURRENT_USER_ID,
-    type: "in-app",
-    title: "Welcome to Chirp!",
-    content: "Welcome to our notification system. Explore the features and let us know what you think!",
-    timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-    read: false
-  },
-  {
-    id: "notif-4",
-    userId: CURRENT_USER_ID,
-    type: "email",
-    title: "Weekly Newsletter",
-    content: "Check out the latest updates and features in our weekly newsletter.",
-    timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-    read: true
-  }
-];
+import { supabase } from "@/integrations/supabase/client";
 
 // Simulate API request delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -55,18 +9,18 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 // Get user notifications
 export async function getUserNotifications(userId: string): Promise<NotificationsResponse> {
   try {
-    // Simulate network request
-    await delay(800);
+    const { data: notificationsData, error } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('timestamp', { ascending: false });
     
-    // Simulate API response
-    const userNotifications = notificationsStore
-      .filter(notif => notif.userId === userId)
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    if (error) throw error;
     
     return {
       success: true,
       message: "Notifications retrieved successfully",
-      data: userNotifications
+      data: notificationsData as Notification[]
     };
   } catch (error) {
     console.error("Error fetching notifications:", error);
@@ -87,13 +41,8 @@ export async function sendNotification(
   metadata?: Record<string, any>
 ): Promise<NotificationResponse> {
   try {
-    // Simulate network request
-    await delay(1000);
-    
-    // Create a new notification
-    const newNotification: Notification = {
-      id: `notif-${Date.now()}`,
-      userId,
+    const newNotification = {
+      user_id: userId,
       type,
       title,
       content,
@@ -102,16 +51,20 @@ export async function sendNotification(
       metadata
     };
     
-    // Add to store
-    notificationsStore = [newNotification, ...notificationsStore];
+    const { data, error } = await supabase
+      .from('notifications')
+      .insert(newNotification)
+      .select()
+      .single();
     
-    // Show success toast
+    if (error) throw error;
+    
     toast.success("Notification sent successfully");
     
     return {
       success: true,
       message: "Notification sent successfully",
-      data: newNotification
+      data: data as Notification
     };
   } catch (error) {
     console.error("Error sending notification:", error);
@@ -128,29 +81,19 @@ export async function sendNotification(
 // Mark a notification as read
 export async function markAsRead(notificationId: string): Promise<NotificationResponse> {
   try {
-    // Simulate network request
-    await delay(500);
+    const { data, error } = await supabase
+      .from('notifications')
+      .update({ read: true })
+      .eq('id', notificationId)
+      .select()
+      .single();
     
-    // Update notification in store
-    notificationsStore = notificationsStore.map(notification => 
-      notification.id === notificationId 
-        ? { ...notification, read: true } 
-        : notification
-    );
-    
-    const updatedNotification = notificationsStore.find(n => n.id === notificationId);
-    
-    if (!updatedNotification) {
-      return {
-        success: false,
-        message: "Notification not found"
-      };
-    }
+    if (error) throw error;
     
     return {
       success: true,
       message: "Notification marked as read",
-      data: updatedNotification
+      data: data as Notification
     };
   } catch (error) {
     console.error("Error marking notification as read:", error);
@@ -164,24 +107,20 @@ export async function markAsRead(notificationId: string): Promise<NotificationRe
 // Mark all notifications as read
 export async function markAllAsRead(userId: string): Promise<NotificationsResponse> {
   try {
-    // Simulate network request
-    await delay(800);
+    const { data, error } = await supabase
+      .from('notifications')
+      .update({ read: true })
+      .eq('user_id', userId)
+      .select();
     
-    // Update all notifications for the user
-    notificationsStore = notificationsStore.map(notification => 
-      notification.userId === userId 
-        ? { ...notification, read: true } 
-        : notification
-    );
-    
-    const updatedNotifications = notificationsStore.filter(n => n.userId === userId);
+    if (error) throw error;
     
     toast.success("All notifications marked as read");
     
     return {
       success: true,
       message: "All notifications marked as read",
-      data: updatedNotifications
+      data: data as Notification[]
     };
   } catch (error) {
     console.error("Error marking all notifications as read:", error);
@@ -196,7 +135,11 @@ export async function markAllAsRead(userId: string): Promise<NotificationsRespon
   }
 }
 
-// Get current user ID (for demo purposes)
+// Get current user ID
 export function getCurrentUserId(): string {
-  return CURRENT_USER_ID;
+  const user = supabase.auth.getUser();
+  if (!user) {
+    throw new Error("No user is currently logged in");
+  }
+  return user.data.user?.id || '';
 }

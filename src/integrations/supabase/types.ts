@@ -27,12 +27,78 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          content: string
+          id: string
+          metadata: Json | null
+          read: boolean
+          timestamp: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          id?: string
+          metadata?: Json | null
+          read?: boolean
+          timestamp?: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          id?: string
+          metadata?: Json | null
+          read?: boolean
+          timestamp?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_current_user_profile: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          updated_at: string
+          username: string | null
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
