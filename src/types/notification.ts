@@ -3,7 +3,7 @@ export type NotificationType = "email" | "sms" | "in-app";
 
 export interface Notification {
   id: string;
-  userId: string;
+  user_id: string;  // Changed from userId to user_id to match Supabase schema
   type: NotificationType;
   title: string;
   content: string;

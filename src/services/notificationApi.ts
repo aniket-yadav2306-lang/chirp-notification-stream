@@ -3,9 +3,6 @@ import { Notification, NotificationType, NotificationResponse, NotificationsResp
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-// Simulate API request delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
 // Get user notifications
 export async function getUserNotifications(userId: string): Promise<NotificationsResponse> {
   try {
@@ -136,10 +133,10 @@ export async function markAllAsRead(userId: string): Promise<NotificationsRespon
 }
 
 // Get current user ID
-export function getCurrentUserId(): string {
-  const user = supabase.auth.getUser();
+export async function getCurrentUserId(): Promise<string> {
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     throw new Error("No user is currently logged in");
   }
-  return user.data.user?.id || '';
+  return user.id;
 }
